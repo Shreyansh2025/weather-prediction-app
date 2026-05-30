@@ -11,7 +11,7 @@ export default function Header({
   currentTime: Date;
 }) {
   return (
-    <header className="w-full bg-card border-b border-border py-4 px-6 flex items-center justify-between">
+    <header className="w-full bg-card border-b border-border py-4 px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
       <div className="flex items-center gap-4">
         <div className="bg-primary/20 p-2 rounded-lg text-primary">
           <Cloud className="w-8 h-8" />
@@ -43,7 +43,7 @@ export default function Header({
           </div>
         </div>
         
-        <div className="text-right">
+        <div className="text-right hidden sm:block">
           <div className="font-mono font-medium text-lg tracking-wider">
             {format(currentTime, 'hh:mm:ss aa')}
           </div>

@@ -62,8 +62,8 @@ export default function WeatherApp() {
       />
       
       {/* Navigation Tabs */}
-      <div className="border-b border-border bg-card">
-        <div className="container mx-auto px-6 flex items-center gap-8">
+      <div className="border-b border-border bg-card overflow-x-auto">
+        <div className="container mx-auto px-6 flex items-center gap-8 min-w-max">
           {[
             { id: 'predict', label: '🌤️ City Predict' },
             { id: 'manual', label: '⚙️ Manual' },
