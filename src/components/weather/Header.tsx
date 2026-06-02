@@ -23,25 +23,6 @@ export default function Header({
       </div>
       
       <div className="flex items-center gap-6">
-        <div className="flex items-center gap-3 bg-background rounded-full px-4 py-1.5 border border-border">
-          <span className="text-sm font-medium text-muted-foreground">ML Models:</span>
-          <div className="flex space-x-1">
-            {['Ridge', 'Logistic', 'RF/GB'].map(model => (
-              <button
-                key={model}
-                onClick={() => setSelectedMLModel(model as any)}
-                className={`text-xs px-3 py-1 rounded-full transition-colors ${
-                  selectedMLModel === model 
-                    ? 'bg-primary text-primary-foreground font-medium' 
-                    : 'text-muted-foreground hover:bg-muted'
-                }`}
-                data-testid={`model-select-${model.toLowerCase().replace('/', '')}`}
-              >
-                {model}
-              </button>
-            ))}
-          </div>
-        </div>
         
         <div className="text-right hidden sm:block">
           <div className="font-mono font-medium text-lg tracking-wider">
