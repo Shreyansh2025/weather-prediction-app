@@ -2,12 +2,8 @@ import { Cloud } from "lucide-react";
 import { format } from "date-fns";
 
 export default function Header({ 
-  selectedMLModel, 
-  setSelectedMLModel,
   currentTime
 }: {
-  selectedMLModel: string;
-  setSelectedMLModel: (model: 'Ridge' | 'Logistic' | 'RF/GB') => void;
   currentTime: Date;
 }) {
   return (
@@ -23,7 +19,6 @@ export default function Header({
       </div>
       
       <div className="flex items-center gap-6">
-        
         <div className="text-right hidden sm:block">
           <div className="font-mono font-medium text-lg tracking-wider">
             {format(currentTime, 'hh:mm:ss aa')}

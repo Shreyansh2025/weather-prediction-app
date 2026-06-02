@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Cpu, Activity, Thermometer, Droplets, Wind, CloudRain, Gauge } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
 
 interface PredictionResult {
   prediction: string;
@@ -21,13 +20,8 @@ function runPrediction(
   humidity: number,
   wind: number,
   precip: number,
-  pressure: number,
-  model: string
+  pressure: number
 ): PredictionResult {
-  // Ridge model — temperature + pressure weighted
-  // Logistic model — humidity + precipitation weighted
-  // RF/GB model — ensemble of all factors
-
   let prediction = "Pleasant Day";
   let description = "Comfortable conditions expected. Light clothing recommended.";
   let color = "text-emerald-400";
@@ -85,14 +79,11 @@ function runPrediction(
     color = "text-lime-400"; bgColor = "bg-lime-500/10 border-lime-500/20"; icon = "🌞"; confidence = 80;
   }
 
-  // Model-specific confidence variation
-  const modelVariance: Record<string, number> = { Ridge: 0, Logistic: -3, 'RF/GB': +2 };
-  confidence = Math.min(99, Math.max(55, confidence + (modelVariance[model] || 0)));
-
+  confidence = Math.min(99, Math.max(55, confidence));
   return { prediction, description, confidence, color, bgColor, icon };
 }
 
-export default function ManualTab({ selectedMLModel }: { selectedMLModel: string }) {
+export default function ManualTab() {
   const [inputs, setInputs] = useState({
     temp: "", humidity: "", wind: "", precip: "", pressure: ""
   });
@@ -108,8 +99,7 @@ export default function ManualTab({ selectedMLModel }: { selectedMLModel: string
         parseFloat(inputs.humidity) || 50,
         parseFloat(inputs.wind) || 10,
         parseFloat(inputs.precip) || 0,
-        parseFloat(inputs.pressure) || 1013,
-        selectedMLModel
+        parseFloat(inputs.pressure) || 1013
       );
       setResult(result);
       setLoading(false);
@@ -130,8 +120,7 @@ export default function ManualTab({ selectedMLModel }: { selectedMLModel: string
             Manual Data Entry
           </CardTitle>
           <CardDescription>
-            Input meteorological parameters to run inference using the{" "}
-            <Badge variant="outline" className="font-mono text-primary border-primary/30">{selectedMLModel}</Badge> model.
+            Input meteorological parameters to run inference using the Rule-Based Engine.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -147,7 +136,6 @@ export default function ManualTab({ selectedMLModel }: { selectedMLModel: string
                   placeholder="e.g. 32.5"
                   value={inputs.temp}
                   onChange={(e) => handleInputChange('temp', e.target.value)}
-                  data-testid="input-temperature"
                 />
               </div>
 
@@ -161,7 +149,6 @@ export default function ManualTab({ selectedMLModel }: { selectedMLModel: string
                   placeholder="e.g. 65"
                   value={inputs.humidity}
                   onChange={(e) => handleInputChange('humidity', e.target.value)}
-                  data-testid="input-humidity"
                 />
               </div>
 
@@ -175,7 +162,6 @@ export default function ManualTab({ selectedMLModel }: { selectedMLModel: string
                   placeholder="e.g. 12"
                   value={inputs.wind}
                   onChange={(e) => handleInputChange('wind', e.target.value)}
-                  data-testid="input-wind"
                 />
               </div>
 
@@ -189,7 +175,6 @@ export default function ManualTab({ selectedMLModel }: { selectedMLModel: string
                   placeholder="e.g. 0"
                   value={inputs.precip}
                   onChange={(e) => handleInputChange('precip', e.target.value)}
-                  data-testid="input-precipitation"
                 />
               </div>
 
@@ -203,7 +188,6 @@ export default function ManualTab({ selectedMLModel }: { selectedMLModel: string
                   placeholder="e.g. 1012"
                   value={inputs.pressure}
                   onChange={(e) => handleInputChange('pressure', e.target.value)}
-                  data-testid="input-pressure"
                 />
               </div>
             </div>
@@ -212,12 +196,11 @@ export default function ManualTab({ selectedMLModel }: { selectedMLModel: string
               type="submit"
               className="w-full h-11 text-base font-medium gap-2"
               disabled={loading}
-              data-testid="button-predict"
             >
               {loading ? (
                 <span className="flex items-center gap-2">
                   <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                  Running {selectedMLModel} Inference...
+                  Running Inference...
                 </span>
               ) : (
                 <>
@@ -236,8 +219,7 @@ export default function ManualTab({ selectedMLModel }: { selectedMLModel: string
             <CardHeader>
               <CardTitle>Inference Result</CardTitle>
               <CardDescription>
-                Output generated by{" "}
-                <span className="font-semibold text-foreground">{selectedMLModel}</span> model
+                Output generated by the <span className="font-semibold text-foreground">Rule-Based Engine</span>
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center justify-center h-[calc(100%-100px)] text-center space-y-6 pb-10">
@@ -257,7 +239,7 @@ export default function ManualTab({ selectedMLModel }: { selectedMLModel: string
 
               <div className="w-full max-w-xs space-y-2 bg-background/50 p-5 rounded-xl border border-border">
                 <div className="flex justify-between items-center text-sm font-medium">
-                  <span className="text-muted-foreground">Model Confidence</span>
+                  <span className="text-muted-foreground">Confidence Score</span>
                   <span className={`font-bold ${result.confidence >= 85 ? 'text-emerald-400' : result.confidence >= 70 ? 'text-yellow-400' : 'text-orange-400'}`}>
                     {result.confidence}%
                   </span>
@@ -274,7 +256,7 @@ export default function ManualTab({ selectedMLModel }: { selectedMLModel: string
             <Activity className="w-14 h-14 mb-4 opacity-20" />
             <p className="text-lg font-medium">No Prediction Yet</p>
             <p className="text-sm max-w-sm mt-2 opacity-70">
-              Fill in the meteorological parameters and click Predict to see ML model output.
+              Fill in the meteorological parameters and click Predict to see the engine's output.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-2 opacity-50">
               {["Hot Day", "Rainy Day", "Storm", "Foggy", "Cold Day", "Windy"].map(l => (

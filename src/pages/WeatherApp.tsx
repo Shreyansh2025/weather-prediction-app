@@ -19,7 +19,6 @@ export default function WeatherApp() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>('predict');
-  const [selectedMLModel, setSelectedMLModel] = useState<'Ridge' | 'Logistic' | 'RF/GB'>('Ridge');
   const [currentTime, setCurrentTime] = useState(new Date());
 
   // Clock
@@ -55,11 +54,7 @@ export default function WeatherApp() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <Header 
-        selectedMLModel={selectedMLModel} 
-        setSelectedMLModel={setSelectedMLModel}
-        currentTime={currentTime}
-      />
+      <Header currentTime={currentTime} />
       
       {/* Navigation Tabs */}
       <div className="border-b border-border bg-card overflow-x-auto">
@@ -126,12 +121,11 @@ export default function WeatherApp() {
             )}
             
             {activeTab === 'manual' && (
-              <ManualTab selectedMLModel={selectedMLModel} />
+              <ManualTab />
             )}
             
             {activeTab === 'map' && (
               <div className="space-y-6">
-                {/* <CitySearch onSelectLocation={handleSelectLocation} /> */}
                 <WeatherMap currentCity={selectedCity} onSelectLocation={handleSelectLocation} />
               </div>
             )}
