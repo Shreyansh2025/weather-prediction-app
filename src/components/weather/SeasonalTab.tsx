@@ -67,12 +67,20 @@ export default function SeasonalTab({
             <SelectTrigger data-testid="select-state">
               <SelectValue placeholder="Select a State to compare..." />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">-- Use Current City ({currentCity}) --</SelectItem>
-              {STATES.map(state => (
-                <SelectItem key={state} value={state}>{state}</SelectItem>
-              ))}
-            </SelectContent>
+<SelectContent 
+  className="z-[9999] max-h-[300px]" // 1. Added max-height
+  position="popper"                 // 2. Added position popper
+  sideOffset={5}                    // 3. Optional: adds a small gap
+>
+  <SelectItem value="none">-- Use Current City ({currentCity}) --</SelectItem>
+  
+  {/* Wrap the mapping in a div to ensure the scroll area is contained */}
+  <div className="overflow-y-auto"> 
+    {STATES.map(state => (
+      <SelectItem key={state} value={state}>{state}</SelectItem>
+    ))}
+  </div>
+</SelectContent>
           </Select>
         </div>
       </div>

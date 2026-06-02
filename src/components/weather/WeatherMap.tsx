@@ -86,6 +86,8 @@ export default function WeatherMap({
   const [isClient, setIsClient] = useState(false);
   const [clickLoading, setClickLoading] = useState(false);
   const [clickedPoint, setClickedPoint] = useState<{ lat: number; lon: number } | null>(null);
+  const [customTemp, setCustomTemp] = useState<number | null>(null);
+  
 
   // Fetch real temps for city markers
   const [cityTemps, setCityTemps] = useState<Record<string, number>>({});
@@ -125,6 +127,31 @@ export default function WeatherMap({
     }
     loadTemps();
   }, []);
+
+  useEffect(() => {
+    const fetchCustomWeather = async () => {
+      // Only fetch if it's not one of the default cities and has valid coordinates
+      const isDefaultCity = CITIES.some(city => city.name === currentCity.name);
+      
+      if (!isDefaultCity && currentCity.lat !== 0 && currentCity.lon !== 0) {
+        try {
+          const response = await fetch(
+            `https://api.open-meteo.com/v1/forecast?latitude=${currentCity.lat}&longitude=${currentCity.lon}&current_weather=true`
+          );
+          const data = await response.json();
+          setCustomTemp(data.current_weather.temperature);
+        } catch (error) {
+          console.error("Error fetching custom weather:", error);
+          setCustomTemp(null);
+        }
+      } else if (isDefaultCity) {
+        // Reset customTemp if the user switches back to a default city
+        setCustomTemp(null);
+      }
+    };
+
+    fetchCustomWeather();
+  }, [currentCity]);
 
   const handleMapClick = useCallback(async (lat: number, lng: number) => {
     setClickLoading(true);
@@ -244,7 +271,10 @@ export default function WeatherMap({
               icon={createPulseMarker()}
             >
               <Popup closeButton={false}>
-                <div className="text-center text-sm font-bold p-1">{currentCity.name}</div>
+                <div className="text-sm font-bold text-center p-1">
+                  {currentCity.name}
+                  {customTemp !== null && <div className="text-blue-500">{customTemp}°C</div>}
+                </div>
               </Popup>
             </Marker>
           )}
@@ -256,7 +286,10 @@ export default function WeatherMap({
               icon={createPulseMarker()}
             >
               <Popup closeButton={false}>
-                <div className="text-sm font-bold text-center p-1">{currentCity.name}</div>
+                <div className="text-sm font-bold text-center p-1">
+                  {currentCity.name}
+                  {customTemp !== null && <div className="text-blue-500">{customTemp}°C</div>}
+                </div>
               </Popup>
             </Marker>
           )}

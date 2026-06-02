@@ -46,7 +46,9 @@ export default function WeatherApp() {
 
   const handleSelectLocation = (name: string, lat: number, lon: number) => {
     setSelectedCity({ name, lat, lon });
-    // If we're not on a tab that shows city data, switch to predict
+    
+    // Only redirect to 'predict' if the user is on the 'manual' tab (since manual has no city data).
+    // If they are on the 'map' tab, let them stay on the map!
     if (activeTab === 'manual') {
       setActiveTab('predict');
     }
